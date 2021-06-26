@@ -1,5 +1,5 @@
 package com.example.mviapp.redux
 
-interface Reducer<S: State, A: Action> {
+interface IReducer<S: IState, A: IAction> {
     fun reduce(currentState: S, action: A): S
 }

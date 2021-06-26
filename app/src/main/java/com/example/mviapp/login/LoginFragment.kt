@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.core.widget.doOnTextChanged
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -14,7 +13,6 @@ import com.example.mviapp.R
 import com.example.mviapp.databinding.FragmentLoginBinding
 import com.example.mviapp.extensions.setVisible
 import com.example.mviapp.extensions.toStringOrEmpty
-import com.example.mviapp.redux.State
 import com.example.mviapp.view_states.LoginViewState
 import kotlinx.coroutines.flow.collect
 
@@ -42,22 +40,34 @@ class LoginFragment : Fragment() {
         binding = DataBindingUtil
             .inflate(inflater, R.layout.fragment_login, container, false)
 
-        binding.emailInput.doOnTextChanged { text, _, _, _ ->
-            viewModel.emailChanged(text.toStringOrEmpty())
-        }
+        binding.apply {
+            emailInput.doOnTextChanged { text, _, _, _ ->
+                viewModel.emailChanged(text.toStringOrEmpty())
+            }
 
-        binding.passwordInput.doOnTextChanged { text, _, _, _ ->
-            viewModel.passwordChanged(text.toStringOrEmpty())
-        }
+            passwordInput.doOnTextChanged { text, _, _, _ ->
+                viewModel.passwordChanged(text.toStringOrEmpty())
+            }
 
-        binding.button.setOnClickListener {
-            viewModel.signInButtonClicked()
+            button.setOnClickListener {
+                viewModel.signInButtonClicked()
+            }
         }
 
         return binding.root
     }
 
     private fun processViewState(viewState: LoginViewState) {
-        binding.loginProgressBar.setVisible(viewState)
+        with(binding) {
+            loginProgressBar.setVisible(viewState)
+
+            emailInput.isEnabled = !viewState.isLoading
+            passwordInput.isEnabled = !viewState.isLoading
+
+
+            emailInput.error = viewState.emailError
+        }
     }
+
+
 }
